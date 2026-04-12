@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 
 export const useAuth = create((set) => ({
   currentUser: null,
@@ -12,7 +13,7 @@ export const useAuth = create((set) => ({
       //set loading true
       set({ loading: true, currentUser: null, isAuthenticated: false, error: null });
       //make api call
-      let res = await axios.post("https://atp-24eg112c38-2.onrender.com/auth/login", userCred, { withCredentials: true });
+      let res = await axios.post(`${API_BASE_URL}/auth/login`, userCred, { withCredentials: true });
       //update state
       if (res.status === 200) {
         set({
@@ -37,7 +38,7 @@ export const useAuth = create((set) => ({
     try {
       //set loading state
       //make logout api req
-      let res = await axios.get("https://atp-24eg112c38-2.onrender.com/auth/logout", { withCredentials: true });
+      let res = await axios.get(`${API_BASE_URL}/auth/logout`, { withCredentials: true });
       //update state
       if (res.status === 200) {
         set({
@@ -60,7 +61,7 @@ export const useAuth = create((set) => ({
   checkAuth: async () => {
     try {
       set({ loading: true });
-      const res = await axios.get("https://atp-24eg112c38-2.onrender.com/auth/check-auth", { withCredentials: true });
+      const res = await axios.get(`${API_BASE_URL}/auth/check-auth`, { withCredentials: true });
 
       set({
         currentUser: res.data.payload,

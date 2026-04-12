@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { useEffect } from "react";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 
 import {
   formCard,
@@ -43,7 +44,7 @@ function EditArticle() {
     modifiedArticle.articleId = article._id;
 
     let res = await axios.put(
-      "https://atp-24eg112c38-2.onrender.com/author-api/articles",
+      `${API_BASE_URL}/author-api/articles`,
       modifiedArticle,
       { withCredentials: true }
     );

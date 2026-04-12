@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "../stores/authStore";
 import { useForm } from "react-hook-form";
+import { API_BASE_URL } from "../config";
 
 import {
   articlePageWrapper,
@@ -49,7 +50,7 @@ function ArticleByID() {
 
       try {
         const res = await axios.get(
-          `https://atp-24eg112c38-2.onrender.com/user-api/article/${id}`,
+          `${API_BASE_URL}/user-api/article/${id}`,
           { withCredentials: true }
         );
 
@@ -83,7 +84,7 @@ function ArticleByID() {
 
     try {
       const res = await axios.patch(
-        `https://atp-24eg112c38-2.onrender.com/author-api/articles`,
+        `${API_BASE_URL}/author-api/articles`,
         {
           articleId: article._id,
           isArticleActive: newStatus,
@@ -112,7 +113,7 @@ function ArticleByID() {
     commentObj.articleId = article._id;
 
     let res = await axios.put(
-      "https://atp-24eg112c38-2.onrender.com/user-api/articles",
+      `${API_BASE_URL}/user-api/articles`,
       commentObj,
       { withCredentials: true }
     );

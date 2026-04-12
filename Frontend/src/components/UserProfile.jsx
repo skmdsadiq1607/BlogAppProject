@@ -1,6 +1,7 @@
 import { useAuth } from "../stores/authStore";
 import { useNavigate } from "react-router";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 import { useEffect, useState } from "react";
 
 import {
@@ -27,7 +28,7 @@ function UserProfile() {
       setLoading(true);
       try {
         let res = await axios.get(
-          "https://atp-24eg112c38-2.onrender.com/user-api/articles",
+          `${API_BASE_URL}/user-api/articles`,
           { withCredentials: true }
         );
 

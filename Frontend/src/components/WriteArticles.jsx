@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 import { useNavigate } from "react-router";
 
 import {
@@ -35,7 +36,7 @@ function WriteArticles() {
 
     try {
       let res = await axios.post(
-        "https://atp-24eg112c38-2.onrender.com/author-api/article",
+        `${API_BASE_URL}/author-api/article`,
         articleObj,
         { withCredentials: true }
       );
