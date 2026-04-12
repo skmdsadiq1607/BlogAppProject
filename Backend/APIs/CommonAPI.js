@@ -4,7 +4,7 @@ import {UserModel} from '../models/UserModel.js'
 import {hash,compare} from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { userApp } from './UserAPI.js'
-import { verifyToken } from '../middlewares/verifyToken.js'
+import { verifyToken } from '../middlewares/VerifyToken.js'
 
 export const commonApp = exp.Router()
 import { upload } from '../config/multer.js';
