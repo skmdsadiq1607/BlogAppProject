@@ -1,0 +1,7 @@
+{
+  "buildCommand": "cd Frontend && npm run build",
+  "outputDirectory": "Frontend/dist",
+  "env": {
+    "VITE_API_BASE_URL": "https://blogappproject-1yyb.onrender.com"
+  }
+}
