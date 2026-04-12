@@ -2,7 +2,7 @@
 import exp from 'express'
 import {ArticleModel} from '../models/ArticleModel.js'
 import {UserModel} from '../models/UserModel.js'
-import {verifyToken} from '../middlewares/verifyToken.js'
+import {verifyToken} from '../middlewares/VerifyToken.js'
 export const userApp = exp.Router()
 
 // read all article route
