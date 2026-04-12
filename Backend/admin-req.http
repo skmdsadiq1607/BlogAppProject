@@ -1,0 +1,28 @@
+### ADMIN
+
+
+### login
+POST http://localhost:5000/auth/login
+Content-Type: application/json
+
+{
+    "email":"admin@gmail.com",
+    "password":"admin"
+}
+
+###logout
+GET  http://localhost:5000/auth/logout
+
+
+### view all users
+GET http://localhost:5000/admin-api/users
+
+
+### Block / Activate user
+PATCH http://localhost:5000/admin-api/users
+Content-Type: application/json
+
+{
+    "userId":"69b3905258479ad2b9e83b26",
+    "isUserActive":true
+}

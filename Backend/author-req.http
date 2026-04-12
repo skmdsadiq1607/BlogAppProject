@@ -1,0 +1,58 @@
+### create an artic;e
+POST http://localhost:5000/author-api/article
+Content-Type: application/json
+
+{
+    "author":"69b3c83f8f6a26006c9e9517",
+    "title":"Article 2 by auhtor 2",
+    "category":"AI",
+    "content":"test article for AI"
+}
+
+### add a new aauhtor i.e. REGISTRATION
+POST http://localhost:5000/auth/users
+Content-Type: application/json
+
+{
+    "firstName":"A",
+    "lastName":"author2",
+    "email":"author2@gmail.com",
+    "password":"author2",
+    "role":"AUTHOR",
+    "profileImageUrl":"xdcfvgbhnjm"
+}
+
+### get own articles
+GET http://localhost:5000/author-api/articles
+
+### update own article 
+PUT http://localhost:5000/author-api/articles
+Content-Type: application/json
+
+{
+    "articleId":"69b3cec07a95fff64d02464f",
+    "title":"This is modified aticle of author 2",
+    "category":"programming",
+    "content":"fvgbhnj"
+}
+
+### delete own article
+PATCH http://localhost:5000/author-api/articles
+Content-Type: application/json
+
+{
+    "articleId":"69b3cf318ed9419715ae93f2",
+    "isArticleActive":false
+}
+
+### login
+POST http://localhost:5000/auth/login
+Content-Type: application/json
+
+{
+    "email":"author1@gmail.com",
+    "password":"author1"
+}
+
+###
+GET  http://localhost:5000/auth/logout

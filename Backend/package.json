@@ -1,0 +1,25 @@
+{
+  "name": "blogappproject",
+  "version": "1.0.0",
+  "description": "//Blog App \r //Types of Roles :            *Author*              *User*                   *Admin*\r                            Registration           Registration                Login\r                               Login                  Login                 View Articles\r                            Add article            View Articles         Block and activate users\r                         View Author Articles      Write comments          \r                         Edit&Delete Articles",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.9.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.3.0",
+    "multer": "^2.1.1"
+  }
+}
