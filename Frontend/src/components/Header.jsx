@@ -32,95 +32,148 @@ function Header() {
 
   const closeMenu = () => setMenuOpen(false);
 
-  return (
-    <nav className={navbarClass}>
-      <div className={`${navContainerClass} flex items-center justify-between`}>
+  const navItemClass = ({ isActive }) =>
+    isActive ? navLinkActiveClass : navLinkClass;
 
-        {/* LOGO */}
-        <NavLink to="/" className={navBrandClass}>
-          My Blog
+  return (
+    <header className={`${navbarClass} sticky top-0 z-50 bg-white shadow-sm`}>
+      <div className={`${navContainerClass} flex items-center justify-between py-4`}>
+        {/* Logo */}
+        <NavLink
+          to="/"
+          className={`${navBrandClass} text-2xl font-bold text-blue-600`}
+          onClick={closeMenu}
+        >
+          MyBlog
         </NavLink>
 
-        {/* HAMBURGER (mobile only) */}
-        <button
-          className="md:hidden text-2xl"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          ☰
-        </button>
-
-        {/* NAV LINKS */}
-        <ul
-          className={`${navLinksClass} 
-          absolute md:static top-16 left-0 w-full md:w-auto
-          bg-white md:bg-transparent
-          flex flex-col md:flex-row
-          gap-4 md:gap-6
-          p-4 md:p-0
-          shadow md:shadow-none
-          transition-all
-          ${menuOpen ? "block" : "hidden md:flex"}`}
-        >
-          {/* HOME */}
+        {/* Desktop Nav */}
+        <ul className={`${navLinksClass} hidden md:flex items-center gap-6`}>
           <li>
-            <NavLink
-              to="/"
-              end
-              onClick={closeMenu}
-              className={({ isActive }) =>
-                isActive ? navLinkActiveClass : navLinkClass
-              }
-            >
+            <NavLink to="/" end className={navItemClass}>
               Home
             </NavLink>
           </li>
 
-          {/* NOT LOGGED IN */}
-          {!isAuthenticated && (
+          <li>
+            <NavLink to="/blogs" className={navItemClass}>
+              Blogs
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink to="/about" className={navItemClass}>
+              About
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink to="/contact" className={navItemClass}>
+              Contact
+            </NavLink>
+          </li>
+
+          {!isAuthenticated ? (
             <>
               <li>
-                <NavLink
-                  to="/register"
-                  onClick={closeMenu}
-                  className={({ isActive }) =>
-                    isActive ? navLinkActiveClass : navLinkClass
-                  }
-                >
+                <NavLink to="/register" className={navItemClass}>
                   Register
                 </NavLink>
               </li>
-
               <li>
                 <NavLink
                   to="/login"
-                  onClick={closeMenu}
-                  className={({ isActive }) =>
-                    isActive ? navLinkActiveClass : navLinkClass
-                  }
+                  className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
                 >
                   Login
                 </NavLink>
               </li>
             </>
-          )}
-
-          {/* LOGGED IN */}
-          {isAuthenticated && (
+          ) : (
             <li>
               <NavLink
                 to={getProfilePath()}
-                onClick={closeMenu}
-                className={({ isActive }) =>
-                  isActive ? navLinkActiveClass : navLinkClass
-                }
+                className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition text-sm font-medium"
               >
                 Profile
               </NavLink>
             </li>
           )}
         </ul>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden text-3xl text-gray-700"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? "✕" : "☰"}
+        </button>
       </div>
-    </nav>
+
+      {/* Mobile Nav */}
+      {menuOpen && (
+        <div className="md:hidden bg-white border-t shadow-sm">
+          <ul className="flex flex-col gap-4 px-6 py-4">
+            <li>
+              <NavLink to="/" end onClick={closeMenu} className={navItemClass}>
+                Home
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink to="/blogs" onClick={closeMenu} className={navItemClass}>
+                Blogs
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink to="/about" onClick={closeMenu} className={navItemClass}>
+                About
+              </NavLink>
+            </li>
+
+            <li>
+              <NavLink to="/contact" onClick={closeMenu} className={navItemClass}>
+                Contact
+              </NavLink>
+            </li>
+
+            {!isAuthenticated ? (
+              <>
+                <li>
+                  <NavLink
+                    to="/register"
+                    onClick={closeMenu}
+                    className={navItemClass}
+                  >
+                    Register
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/login"
+                    onClick={closeMenu}
+                    className="block w-fit px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+                  >
+                    Login
+                  </NavLink>
+                </li>
+              </>
+            ) : (
+              <li>
+                <NavLink
+                  to={getProfilePath()}
+                  onClick={closeMenu}
+                  className="block w-fit px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition text-sm font-medium"
+                >
+                  Profile
+                </NavLink>
+              </li>
+            )}
+          </ul>
+        </div>
+      )}
+    </header>
   );
 }
 
