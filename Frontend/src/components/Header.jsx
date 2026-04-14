@@ -39,21 +39,19 @@ function Header() {
 
   return (
     <nav className={`${navbarClass} supports-[backdrop-filter]:bg-white/75 bg-white/90`}>
-      <div className={`${navContainerClass} relative h-full`}>
-        <div className="flex items-center h-full">
-          {/* Logo */}
+      <div className={`${navContainerClass} h-full`}>
+        <div className="flex items-center justify-between h-full">
+          {/* Logo left */}
           <NavLink
             to="/"
             onClick={closeMenu}
-            className={`${navBrandClass} z-20 hover:opacity-80 transition duration-300`}
+            className={`${navBrandClass} hover:opacity-80 transition duration-300`}
           >
             My Blog
           </NavLink>
 
-          {/* Center nav for desktop */}
-          <ul
-            className={`${navLinksClass} hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-8`}
-          >
+          {/* Desktop nav right */}
+          <ul className={`${navLinksClass} hidden md:flex items-center gap-8 ml-auto`}>
             <li>
               <NavLink to="/" end className={getNavClass}>
                 Home
@@ -67,6 +65,7 @@ function Header() {
                     Register
                   </NavLink>
                 </li>
+
                 <li>
                   <NavLink
                     to="/login"
@@ -98,7 +97,7 @@ function Header() {
             )}
           </ul>
 
-          {/* Mobile button */}
+          {/* Mobile menu button */}
           <button
             className="md:hidden ml-auto flex items-center justify-center w-10 h-10 rounded-full border border-[#d2d2d7] text-[#1d1d1f] hover:bg-[#f5f5f7] transition"
             onClick={() => setMenuOpen(!menuOpen)}
@@ -134,6 +133,7 @@ function Header() {
                   Register
                 </NavLink>
               </li>
+
               <li>
                 <NavLink
                   to="/login"
