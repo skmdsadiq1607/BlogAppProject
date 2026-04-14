@@ -2,38 +2,46 @@ import React from "react";
 
 function Home() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      
+    <div className="min-h-screen flex items-center justify-center bg-[#f5f5f7] px-4">
+
       <div className="text-center max-w-2xl">
-        
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+
+        {/* SMALL TAG */}
+        <p className="text-xs tracking-widest text-blue-600 font-semibold mb-3 uppercase">
+          Welcome to MyBlog
+        </p>
+
+        {/* TITLE */}
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1d1d1f] mb-5 leading-tight tracking-tight">
           Share Ideas. Read Stories. Stay Inspired.
         </h1>
 
-        <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed">
-          MyBlog is a simple yet powerful platform where you can explore meaningful articles,
-          express your thoughts, and connect with a growing community of readers and writers.
-          Whether you're here to learn, write, or discover — there's always something valuable waiting for you.
+        {/* DESCRIPTION */}
+        <p className="text-sm sm:text-base md:text-lg text-[#6e6e73] leading-relaxed">
+          Discover thoughtful articles, share your perspective, and connect with a
+          growing community of readers and writers. Whether you're exploring new
+          ideas or publishing your own — MyBlog makes it simple and meaningful.
         </p>
 
-        <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+        {/* BUTTONS */}
+        <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
 
-          <button className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition">
+          <button className="bg-[#0066cc] text-white px-7 py-2.5 rounded-full text-sm font-medium hover:bg-[#004499] transition shadow-sm">
             Start Reading
           </button>
 
-          <button className="border border-gray-300 text-gray-800 px-6 py-2 rounded-full hover:bg-gray-100 transition">
+          <button className="border border-[#d2d2d7] text-[#1d1d1f] px-7 py-2.5 rounded-full text-sm font-medium hover:bg-white transition">
             Become a Writer
           </button>
 
         </div>
 
-        <p className="mt-8 text-xs sm:text-sm text-gray-400">
-          Built for creators • Powered by modern web technologies
+        {/* FOOT NOTE */}
+        <p className="mt-10 text-xs text-[#a1a1a6] tracking-tight">
+          Built for creators • Clean • Minimal • Fast
         </p>
 
       </div>
-
     </div>
   );
 }
