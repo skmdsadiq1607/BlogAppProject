@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom";
 import { useAuth } from "../stores/authStore";
 import { useState } from "react";
 
@@ -32,148 +32,92 @@ function Header() {
 
   const closeMenu = () => setMenuOpen(false);
 
-  const navItemClass = ({ isActive }) =>
-    isActive ? navLinkActiveClass : navLinkClass;
-
   return (
-    <header className={`${navbarClass} sticky top-0 z-50 bg-white shadow-sm`}>
-      <div className={`${navContainerClass} flex items-center justify-between py-4`}>
-        {/* Logo */}
-        <NavLink
-          to="/"
-          className={`${navBrandClass} text-2xl font-bold text-blue-600`}
-          onClick={closeMenu}
-        >
-          MyBlog
+    <nav className={`${navbarClass} sticky top-0 z-50`}>
+      <div className={`${navContainerClass} flex items-center justify-between`}>
+        <NavLink to="/" className={navBrandClass} onClick={closeMenu}>
+          My Blog
         </NavLink>
 
-        {/* Desktop Nav */}
-        <ul className={`${navLinksClass} hidden md:flex items-center gap-6`}>
+        <button
+          className="md:hidden text-2xl font-semibold text-gray-700"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? "✕" : "☰"}
+        </button>
+
+        <ul
+          className={`
+            ${navLinksClass}
+            absolute md:static top-16 left-0 w-full md:w-auto
+            bg-white md:bg-transparent
+            flex flex-col md:flex-row
+            gap-3 md:gap-6
+            p-4 md:p-0
+            rounded-b-xl md:rounded-none
+            shadow-lg md:shadow-none
+            border-t md:border-0
+            transition-all duration-200
+            ${menuOpen ? "block" : "hidden md:flex"}
+          `}
+        >
           <li>
-            <NavLink to="/" end className={navItemClass}>
+            <NavLink
+              to="/"
+              end
+              onClick={closeMenu}
+              className={({ isActive }) =>
+                isActive ? navLinkActiveClass : navLinkClass
+              }
+            >
               Home
             </NavLink>
           </li>
 
-          <li>
-            <NavLink to="/blogs" className={navItemClass}>
-              Blogs
-            </NavLink>
-          </li>
-
-          <li>
-            <NavLink to="/about" className={navItemClass}>
-              About
-            </NavLink>
-          </li>
-
-          <li>
-            <NavLink to="/contact" className={navItemClass}>
-              Contact
-            </NavLink>
-          </li>
-
-          {!isAuthenticated ? (
+          {!isAuthenticated && (
             <>
               <li>
-                <NavLink to="/register" className={navItemClass}>
+                <NavLink
+                  to="/register"
+                  onClick={closeMenu}
+                  className={({ isActive }) =>
+                    isActive ? navLinkActiveClass : navLinkClass
+                  }
+                >
                   Register
                 </NavLink>
               </li>
+
               <li>
                 <NavLink
                   to="/login"
-                  className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+                  onClick={closeMenu}
+                  className={({ isActive }) =>
+                    isActive ? navLinkActiveClass : navLinkClass
+                  }
                 >
                   Login
                 </NavLink>
               </li>
             </>
-          ) : (
+          )}
+
+          {isAuthenticated && (
             <li>
               <NavLink
                 to={getProfilePath()}
-                className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition text-sm font-medium"
+                onClick={closeMenu}
+                className={({ isActive }) =>
+                  isActive ? navLinkActiveClass : navLinkClass
+                }
               >
                 Profile
               </NavLink>
             </li>
           )}
         </ul>
-
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden text-3xl text-gray-700"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          {menuOpen ? "✕" : "☰"}
-        </button>
       </div>
-
-      {/* Mobile Nav */}
-      {menuOpen && (
-        <div className="md:hidden bg-white border-t shadow-sm">
-          <ul className="flex flex-col gap-4 px-6 py-4">
-            <li>
-              <NavLink to="/" end onClick={closeMenu} className={navItemClass}>
-                Home
-              </NavLink>
-            </li>
-
-            <li>
-              <NavLink to="/blogs" onClick={closeMenu} className={navItemClass}>
-                Blogs
-              </NavLink>
-            </li>
-
-            <li>
-              <NavLink to="/about" onClick={closeMenu} className={navItemClass}>
-                About
-              </NavLink>
-            </li>
-
-            <li>
-              <NavLink to="/contact" onClick={closeMenu} className={navItemClass}>
-                Contact
-              </NavLink>
-            </li>
-
-            {!isAuthenticated ? (
-              <>
-                <li>
-                  <NavLink
-                    to="/register"
-                    onClick={closeMenu}
-                    className={navItemClass}
-                  >
-                    Register
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink
-                    to="/login"
-                    onClick={closeMenu}
-                    className="block w-fit px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
-                  >
-                    Login
-                  </NavLink>
-                </li>
-              </>
-            ) : (
-              <li>
-                <NavLink
-                  to={getProfilePath()}
-                  onClick={closeMenu}
-                  className="block w-fit px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition text-sm font-medium"
-                >
-                  Profile
-                </NavLink>
-              </li>
-            )}
-          </ul>
-        </div>
-      )}
-    </header>
+    </nav>
   );
 }
 
