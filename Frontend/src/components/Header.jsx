@@ -38,7 +38,7 @@ function Header() {
 
         {/* LOGO */}
         <NavLink to="/" className={navBrandClass}>
-          <img src="https://icon2.cleanpng.com/20180520/ory/kisspng-social-media-blogger-wordpress-com-5b011c79f119f1.1811250015267994819876.jpg" alt="Logo"/>
+          <img className="{navBrandClass}" src="https://icon2.cleanpng.com/20180520/ory/kisspng-social-media-blogger-wordpress-com-5b011c79f119f1.1811250015267994819876.jpg" alt="Logo"/>
         </NavLink>
 
         {/* HAMBURGER (mobile only) */}
