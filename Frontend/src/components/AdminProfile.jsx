@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useNavigate } from "react-router";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../stores/authStore";
 import { useState, useEffect } from "react";
 import axios from "axios";

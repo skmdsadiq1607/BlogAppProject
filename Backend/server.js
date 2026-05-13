@@ -13,32 +13,63 @@ config();
 const app = exp()
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:5173",
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:5173")
+      .split(',')
+      .map(o => o.trim().replace(/\/$/, ''));
+    
+    const isAllowed = allowedOrigins.some(allowed => origin.replace(/\/$/, '') === allowed);
+    
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
-  //methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  //allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 
 // assign port
 
 // connect to db
+// connect to db
 const connectDB = async () => {
-  try {
-    await connect(process.env.DB_URL);
-    console.log("connected to database");
+  const primaryUrl = process.env.DB_URL;
+  const fallbackUrl = process.env.LOCAL_DB_URL;
 
-    const port = process.env.PORT || 5000;
-    app.listen(port, () => console.log(`server started on port ${port}`))
+  if (!primaryUrl) {
+    console.warn("WARNING: DB_URL is not defined in environment variables. Connection will fail.");
   }
-  catch (err) {
-    console.log("error in db connection");
+
+  try {
+    console.log("Attempting to connect to primary database...");
+    await connect(primaryUrl);
+    console.log("connected to database");
+  } catch (err) {
+    console.error("error in primary db connection:", err.message);
+
+    if (fallbackUrl && fallbackUrl !== primaryUrl) {
+      console.log("Attempting fallback local database URL...");
+      try {
+        await connect(fallbackUrl);
+        console.log("connected to fallback local database");
+      } catch (fallbackErr) {
+        console.error("fallback database connection failed:", fallbackErr.message);
+      }
+    } else {
+       console.error("No fallback database available.");
+    }
   }
 }
 
-connectDB();
-
-
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+  console.log(`server started on port ${port}`);
+  connectDB();
+});
 
 // body parser middleware
 app.use(exp.json());
@@ -100,4 +131,4 @@ app.use((err, req, res, next) => {
     message: "error occurred",
     error: "Server side error"
   });
-});
+});

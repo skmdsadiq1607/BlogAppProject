@@ -12,6 +12,13 @@ import {uploadToCloudinary} from '../config/cloudinaryUpload.js'
 import cloudinary from '../config/cloudinary.js'
 
 const {sign}=jwt
+const JWT_SECRET = process.env.SECRET_KEY || process.env.KEY;
+
+const cookieOptions = {
+    httpOnly: true,
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    secure: process.env.NODE_ENV === "production",
+};
 
 // Route to register
 commonApp.post('/users', upload.single("profileImageUrl"), async (req, res, next) => {
@@ -29,7 +36,7 @@ commonApp.post('/users', upload.single("profileImageUrl"), async (req, res, next
         /// upload image to cloudinary from memoryStorage
         if (req.file) {
     try {
-        const cloudinaryResult = await uploadToCloudinary(req.file.buffer);
+        cloudinaryResult = await uploadToCloudinary(req.file.buffer);
         newUser.profileImageUrl = cloudinaryResult?.secure_url;
     } catch (err) {
         newUser.profileImageUrl = "";
@@ -37,11 +44,6 @@ commonApp.post('/users', upload.single("profileImageUrl"), async (req, res, next
 } else {
     newUser.profileImageUrl = "";
 }
-
-        // add CDN link of image to new userObj
-        newUser.profileImageUrl = cloudinaryResult?.secure_url;
-
-        // RUN VALIDATORS MANUALLY
 
         // replace the password eith hashed password
         newUser.password = await hash(newUser.password, 12)
@@ -91,16 +93,12 @@ commonApp.post('/login', async (req, res) => {
             lastName: user.lastName,
             profileImageUrl: user.profileImageUrl
         },
-        process.env.KEY,
+        JWT_SECRET,
         { expiresIn: "1h" }
     )
 
     // set token to the cookie header 
-    res.cookie("token", signedToken, {
-        httpOnly: true,
-        sameSite: "none",
-        secure: true
-    })
+    res.cookie("token", signedToken, cookieOptions)
 
     // remove the password field from the user obj
     const userObj = user.toObject();
@@ -112,11 +110,7 @@ commonApp.post('/login', async (req, res) => {
 // route for logout
 commonApp.get('/logout', (req, res) => {
     // delete the teoken from the cookie storage
-    res.clearCookie("token", {
-        httpOnly: true,
-        sameSite: "none",
-        secure: true
-    })
+    res.clearCookie("token", cookieOptions)
     res.status(200).json({ message: "Logged out successfully" });
 })
 

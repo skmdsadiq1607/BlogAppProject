@@ -1,5 +1,5 @@
 import { useAuth } from "../stores/authStore";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_BASE_URL } from "../config";
 import { useEffect, useState } from "react";

@@ -13,7 +13,7 @@ import {
   linkClass,
 } from "../styles/common";
 
-import { NavLink, useNavigate } from "react-router";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../stores/authStore";
 import { useEffect } from "react";
 import { toast } from "react-hot-toast";

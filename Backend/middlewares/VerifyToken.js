@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { config } from "dotenv";
 config();
 const {verify} = jwt;
+const JWT_SECRET = process.env.SECRET_KEY || process.env.KEY;
 export const verifyToken = ( ...allowedRoles)=>{
     return (req,res,next)=>{
         // token verification logic
@@ -12,7 +13,7 @@ export const verifyToken = ( ...allowedRoles)=>{
     }
     // there is a token and we should verify it
     try{
-        const decodedToken = verify(token,process.env.KEY);
+        const decodedToken = verify(token, JWT_SECRET);
         
         // check the role is same as the decoded token role
         if(!allowedRoles.includes(decodedToken.role)){
