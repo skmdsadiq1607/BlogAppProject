@@ -80,8 +80,11 @@ export const useAuth = create((set) => ({
       }
 
       // other errors
-      console.error("Auth check failed:", err);
+      if (err.response?.status !== 401) {
+        console.error("Auth check failed:", err);
+      }
       set({ loading: false });
+
     }
   },
 }));
