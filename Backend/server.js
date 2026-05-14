@@ -1,7 +1,7 @@
 // Create express application
-import { config } from 'dotenv'
-config();
+import 'dotenv/config'
 import exp from 'express'
+
 import { connect } from 'mongoose'
 import { userApp } from './APIs/UserAPI.js';
 import { authorApp } from './APIs/AuthorAPI.js';
