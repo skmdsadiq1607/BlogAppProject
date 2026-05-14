@@ -1,7 +1,8 @@
 // Create express application
+import { config } from 'dotenv'
+config();
 import exp from 'express'
 import { connect } from 'mongoose'
-import { config } from 'dotenv'
 import { userApp } from './APIs/UserAPI.js';
 import { authorApp } from './APIs/AuthorAPI.js';
 import { adminApp } from './APIs/AdminAPI.js';
@@ -9,40 +10,62 @@ import { commonApp } from './APIs/CommonAPI.js';
 import cookieParser from 'cookie-parser';
 import cors from "cors"
 
-config();
 const app = exp()
+
+
+// 1. CORS Configuration (MUST BE FIRST)
+const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:5173")
+  .split(',')
+  .map(o => o.trim().replace(/\/$/, '').toLowerCase());
+
+console.log("Allowed Origins:", allowedOrigins);
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    
-    const allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:5173")
-      .split(',')
-      .map(o => o.trim().replace(/\/$/, ''));
-    
-    const isAllowed = allowedOrigins.some(allowed => origin.replace(/\/$/, '') === allowed);
-    
-    if (isAllowed) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
+    // For debugging: allow all origins but log the origin
+    console.log("Request Origin:", origin);
+    callback(null, true); 
   },
   credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"]
 }));
 
+// 2. Body Parser and Cookies
+app.use(exp.json());
+app.use(cookieParser())
 
-// assign port
+// 3. API Routes
+app.use('/user-api', userApp);
+app.use('/author-api', authorApp);
+app.use('/admin-api', adminApp);
+app.use('/auth', commonApp);
 
-// connect to db
-// connect to db
+// 4. Invalid Path Handler
+app.use((req, res, next) => {
+  res.status(404).json({ message: `path ${req.url} is invalid` })
+})
+
+// 5. Error Handling Middleware
+app.use((err, req, res, next) => {
+  console.error("!!! DETAILED ERROR LOG !!!");
+  console.error("Name:", err.name);
+  console.error("Message:", err.message);
+  console.error("Stack:", err.stack);
+  
+  // Send back the error message to help debugging in the browser console
+  res.status(err.status || 500).json({
+    message: "Server side error occurred",
+    error: err.message,
+    stack: process.env.NODE_ENV === 'production' ? null : err.stack
+  });
+});
+
+
+// 6. Connect to DB and Start Server
 const connectDB = async () => {
   const primaryUrl = process.env.DB_URL;
   const fallbackUrl = process.env.LOCAL_DB_URL;
-
-  if (!primaryUrl) {
-    console.warn("WARNING: DB_URL is not defined in environment variables. Connection will fail.");
-  }
 
   try {
     console.log("Attempting to connect to primary database...");
@@ -59,76 +82,13 @@ const connectDB = async () => {
       } catch (fallbackErr) {
         console.error("fallback database connection failed:", fallbackErr.message);
       }
-    } else {
-       console.error("No fallback database available.");
     }
   }
 }
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
-  console.log(`server started on port ${port} [v2-cors-fix]`);
+  console.log(`server started on port ${port} [v2.1-cors-fix]`);
   connectDB();
 });
-
-// body parser middleware
-app.use(exp.json());
-app.use(cookieParser())
-
-//path level middleware
-app.use('/user-api', userApp);
-app.use('/author-api', authorApp);
-app.use('/admin-api', adminApp);
-app.use('/auth', commonApp);
-
-
-
-//to handle invalid path
-app.use((req, res, next) => {
-  console.log(req.url)
-  res.status(404).json({ message: `path ${req.url} is invalid` })
-})
-
-// error handling middleware[ALWAYS KEEP AT END OF THE FILE]
-app.use((err, req, res, next) => {
-  console.log("Error name:", err.name);
-  console.log("Error code:", err.code);
-  console.log("Error cause:", err.cause);
-  console.log("Full error:", JSON.stringify(err, null, 2));
-
-  // ValidationError
-  if (err.name === "ValidationError") {
-    return res.status(400).json({
-      message: "error occurred",
-      error: err.message
-    });
-  }
-
-  // CastError
-  if (err.name === "CastError") {
-    return res.status(400).json({
-      message: "error occurred",
-      error: err.message
-    });
-  }
-
-  const errCode = err.code ?? err.cause?.code ?? err.errorResponse?.code;
-  const keyValue = err.keyValue ?? err.cause?.keyValue ?? err.errorResponse?.keyValue;
-
-  // Duplicate key error
-  if (errCode === 11000) {
-    const field = Object.keys(keyValue)[0];
-    const value = keyValue[field];
-
-    return res.status(409).json({
-      message: "error occurred",
-      error: `${field} "${value}" already exists`
-    });
-  }
-
-  // Server error
-  res.status(500).json({
-    message: "error occurred",
-    error: "Server side error"
-  });
-});
+
