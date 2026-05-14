@@ -67,45 +67,50 @@ commonApp.post('/users', upload.single("profileImageUrl"), async (req, res, next
 })
 
 // route for login
-commonApp.post('/login', async (req, res) => {
-    // get email and password from the req
-    const { email, password } = req.body;
+commonApp.post('/login', async (req, res, next) => {
+    try {
+        // get email and password from the req
+        const { email, password } = req.body;
 
-    // get user details
-    const user = await UserModel.findOne({ email: email })
-    if (!user) {
-        return res.status(400).json({ message: "Invalid email" });
+        // get user details
+        const user = await UserModel.findOne({ email: email })
+        if (!user) {
+            return res.status(400).json({ message: "Invalid email" });
+        }
+
+        // compare the password with og password
+        let isMatched = await compare(password, user.password)
+        if (!isMatched) {
+            return res.status(400).json({ message: "Incorrect password" });
+        }
+
+        // TOKEN CREATION
+        const signedToken = sign(
+            {
+                id: user._id,
+                email: user.email,
+                role: user.role,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                profileImageUrl: user.profileImageUrl
+            },
+            JWT_SECRET,
+            { expiresIn: "1h" }
+        )
+
+        // set token to the cookie header 
+        res.cookie("token", signedToken, cookieOptions)
+
+        // remove the password field from the user obj
+        const userObj = user.toObject();
+        delete userObj.password;
+
+        res.status(200).json({ message: "Login Successful", payload: userObj })
+    } catch (err) {
+        next(err);
     }
-
-    // compare the password with og password
-    let isMatched = await compare(password, user.password)
-    if (!isMatched) {
-        return res.status(400).json({ message: "Incorrect password" });
-    }
-
-    // TOKEN CREATION
-    const signedToken = sign(
-        {
-            id: user._id,
-            email: user.email,
-            role: user.role,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            profileImageUrl: user.profileImageUrl
-        },
-        JWT_SECRET,
-        { expiresIn: "1h" }
-    )
-
-    // set token to the cookie header 
-    res.cookie("token", signedToken, cookieOptions)
-
-    // remove the password field from the user obj
-    const userObj = user.toObject();
-    delete userObj.password;
-
-    res.status(200).json({ message: "Login Successful", payload: userObj })
 })
+
 
 // route for logout
 commonApp.get('/logout', (req, res) => {
@@ -123,34 +128,39 @@ commonApp.get("/check-auth", verifyToken("USER", "AUTHOR", "ADMIN"), (req, res) 
 });
 
 // change the password
-commonApp.put('/password', verifyToken("ADMIN", "AUTHOR", "USER"), async (req, res) => {
-    // check if current and new Passwords are same
-    const { currentPassword, newPassword } = req.body;
+commonApp.put('/password', verifyToken("ADMIN", "AUTHOR", "USER"), async (req, res, next) => {
+    try {
+        // check if current and new Passwords are same
+        const { currentPassword, newPassword } = req.body;
 
-    if (currentPassword === newPassword) {
-        return res.json({ message: "Current and new passwords should not be the same" })
+        if (currentPassword === newPassword) {
+            return res.json({ message: "Current and new passwords should not be the same" })
+        }
+
+        // get current password from the role loggedin
+        const userId = req.user?.id;
+
+        // find the user
+        const user = await UserModel.findById(userId);
+
+        const isMatched = await compare(currentPassword, user.password);
+
+        //chck the current paswword of logged in role and req are same/not
+        if (!isMatched) {
+            return res.status(400).json({ message: "Current password is not matching" })
+        }
+
+        //hash the password
+        const hashedPassword = await hash(newPassword, 12);
+
+        //replace the password and save
+        user.password = hashedPassword
+        await user.save();
+
+        //send res
+        res.status(200).json({ message: "Password updated" })
+    } catch (err) {
+        next(err);
     }
-
-    // get current password from the role loggedin
-    const userId = req.user?.id;
-
-    // find the user
-    const user = await UserModel.findById(userId);
-
-    const isMatched = await compare(currentPassword, user.password);
-
-    //chck the current paswword of logged in role and req are same/not
-    if (!isMatched) {
-        return res.status(400).json({ message: "Current password is not matching" })
-    }
-
-    //hash the password
-    const hashedPassword = await hash(newPassword, 12);
-
-    //replace the password and save
-    user.password = hashedPassword
-    user.save();
-
-    //send res
-    res.status(200).json({ message: "Password updated" })
 })
+
